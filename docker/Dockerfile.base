@@ -5,7 +5,7 @@ ENV \
  LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu" \
  NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
  NVIDIA_VISIBLE_DEVICES="all" \
- HANDBRAKE=1.7.3
+ HANDBRAKE=1.8.2
 
 ENV WEB_UI_PORT="8265" SERVER_PORT="8266" NODE_PORT="8267" PUID="1000" PGID="1000" UMASK="002" TZ="Etc/UTC" HOME="/home/Tdarr"
 
@@ -23,6 +23,7 @@ RUN apt-get update &&  \
     # useradd -u ${PUID} -U -d ${HOME} -s /bin/false Tdarr && \
     # usermod -G users Tdarr && \
 
+    curl -s https://deb.nodesource.com/setup_18.x | bash && apt install nodejs -y && node -v && \
     apt-get update && \
     apt-get install -y curl unzip wget comskip \
         # for apprise
@@ -93,10 +94,11 @@ RUN apt-get update &&  \
 
         # FFmpeg 6
         ffmpegversion=$(curl --silent https://api.github.com/repos/jellyfin/jellyfin-ffmpeg/releases/latest | grep -oP '"tag_name":\s*"v\K[^"]+' | sort -h | tail -n1) && \
-        wget https://github.com/jellyfin/jellyfin-ffmpeg/releases/download/v$ffmpegversion/jellyfin-ffmpeg6_$ffmpegversion-jammy_amd64.deb && \
+        # ffmpegversion=6.0.1-7 && \
+        wget https://github.com/jellyfin/jellyfin-ffmpeg/releases/download/v$ffmpegversion/jellyfin-ffmpeg7_$ffmpegversion-jammy_amd64.deb && \
         apt install -y \
-        ./jellyfin-ffmpeg6_$ffmpegversion-jammy_amd64.deb && \
-        rm -rf ./jellyfin-ffmpeg6_$ffmpegversion-jammy_amd64.deb && \
+        ./jellyfin-ffmpeg7_$ffmpegversion-jammy_amd64.deb && \
+        rm -rf ./jellyfin-ffmpeg7_$ffmpegversion-jammy_amd64.deb && \
         ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg && \
         ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/tdarr-ffmpeg && \
         # apt-get install -y ffmpeg && \

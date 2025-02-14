@@ -2,6 +2,11 @@
 
 echo "Starting Tdarr_Server"
 
-cd /app/Tdarr_Server || exit 1
+ARCHITECTURE=$(uname -m)
+MAX_OLD_SPACE=""
 
-exec s6-setuidgid Tdarr ./Tdarr_Server
+if [ "$ARCHITECTURE" != "armv7l" ]; then
+    MAX_OLD_SPACE="--max-old-space-size=16384"
+fi
+
+exec s6-setuidgid abc node $MAX_OLD_SPACE /app/Tdarr_Server/srcug/main.js
