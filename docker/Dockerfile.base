@@ -162,7 +162,9 @@ RUN apt-get update &&  \
     . "${HOME}/.cargo/env" && \
     cargo install cargo-c && \
     rustup target add x86_64-pc-windows-gnu && \
-
+    # =========================================================================================
+    #                                   Install HandBrake
+    # =========================================================================================
     rm -rdf /tmp/handbrake && \
     mkdir -p /tmp/handbrake && \
     git clone \
@@ -171,8 +173,9 @@ RUN apt-get update &&  \
     /tmp/handbrake && \
     cd /tmp/handbrake && \
     ./configure \
-    --enable-nvenc \
     --enable-qsv \
+    --enable-nvdec \
+    --enable-libdovi \
     --enable-x265 \
     --disable-gtk \
     --launch-jobs=14 \
@@ -180,15 +183,17 @@ RUN apt-get update &&  \
     --force && \
     make --directory=build install && \
     cp /tmp/handbrake/build/HandBrakeCLI /usr/local/bin/HandBrakeCLI && \
-    rm -rdf /tmp/handbrake/ ; \
+    cd / && rm -rdf /tmp/handbrake/ ; \
     fi && \
+    # If ARM architecture, install handbrake from apt
     if uname -m | grep -q aarch64; then \
-    apt-get install -y handbrake-cli ffmpeg && \
-    ln -s /usr/bin/ffmpeg /usr/local/bin/tdarr-ffmpeg ; \
+    apt-get install -y handbrake-cli && \
+    echo "ffmpeg installed above" ; \
     fi && \
+    # If ARMv7l architecture, install handbrake from apt
     if uname -m | grep -q armv7l; then \
-    apt-get install -y handbrake-cli ffmpeg && \
-    ln -s /usr/bin/ffmpeg /usr/local/bin/tdarr-ffmpeg ; \
+    apt-get install -y handbrake-cli && \
+    echo "ffmpeg installed above" ; \
     fi && \
 
     trash-empty && \
