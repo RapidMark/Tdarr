@@ -57,7 +57,7 @@ RUN apt-get update &&  \
     libclang-dev && \
     git clone https://github.com/CCExtractor/ccextractor.git && \
     cd ccextractor/linux && \
-    git checkout c55072677875ee766c6cf388da70eff0a686ca62 && \
+    git checkout 35e73c1c90ce3ca69394d3523836bb1cdec28f11 && \
     ./build -without-rust && \
     mv ./ccextractor /usr/bin/ccextractor && \
     cd / && rm -rf /ccextractor && \
