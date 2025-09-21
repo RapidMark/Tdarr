@@ -111,7 +111,9 @@ RUN apt-get update &&  \
     mesa-vdpau-drivers \
     mesa-vulkan-drivers \
     hwinfo && \
-    # HandBrake dependencies
+    # =========================================================================================
+    #                               Install HandBrake dependencies
+    # =========================================================================================
     apt-get install -y \
     autoconf \
     automake \
@@ -119,7 +121,6 @@ RUN apt-get update &&  \
     cmake \
     git \
     libass-dev \
-    libass9 \
     libbz2-dev \
     libfontconfig-dev \
     libfreetype-dev \
@@ -148,9 +149,11 @@ RUN apt-get update &&  \
     ninja-build \
     patch \
     pkg-config \
-    # python \
     tar \
     zlib1g-dev \
+    curl \
+    libssl-dev \
+    clang \
     # QSV dependencies
     libva-dev \
     libdrm-dev && \
