@@ -157,6 +157,11 @@ RUN apt-get update &&  \
     # QSV dependencies
     libva-dev \
     libdrm-dev && \
+    # Install Rust (required for libdovi)
+    curl https://sh.rustup.rs -sSf | sh -s -- -y --profile minimal --default-toolchain stable && \
+    . "${HOME}/.cargo/env" && \
+    cargo install cargo-c && \
+    rustup target add x86_64-pc-windows-gnu && \
 
     rm -rdf /tmp/handbrake && \
     mkdir -p /tmp/handbrake && \
