@@ -9,11 +9,13 @@ ENV \
     FFMPEGVERSION="7.1.2-1"
 
 ENV WEB_UI_PORT="8265" SERVER_PORT="8266" NODE_PORT="8267" PUID="1000" PGID="1000" UMASK="002" TZ="Etc/UTC" HOME="/home/Tdarr"
-
-# handle deps
+# ========================================================================================
+#                                   Install dependencies
+# ========================================================================================
 RUN apt-get update &&  \
     apt-get install -y \
     software-properties-common \
+    curl \
     git \
     trash-cli && \
     mkdir -p \
@@ -21,8 +23,6 @@ RUN apt-get update &&  \
     /logs \
     /temp \
     "${HOME}" && \
-    # useradd -u ${PUID} -U -d ${HOME} -s /bin/false Tdarr && \
-    # usermod -G users Tdarr && \
 
     curl -s https://deb.nodesource.com/setup_18.x | bash && apt install nodejs -y && node -v && \
     apt-get update && \
