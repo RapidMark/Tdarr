@@ -40,9 +40,11 @@ RUN apt-get update &&  \
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/gpg-pub-moritzbunkus.gpg] https://mkvtoolnix.download/ubuntu/ noble main" | tee /etc/apt/sources.list.d/mkvtoolnix.download.list && \
     echo "deb-src [arch=amd64 signed-by=/usr/share/keyrings/gpg-pub-moritzbunkus.gpg] https://mkvtoolnix.download/ubuntu/ noble main" | tee -a /etc/apt/sources.list.d/mkvtoolnix.download.list && \
     apt-get update && apt-get install -y mkvtoolnix && \
-
-    #cc-extractor
+    # ========================================================================================
+    #                                   Install CCExtractor
+    # ========================================================================================
     apt-get install -y \
+    libgpac-dev \
     libglew-dev \
     libglfw3-dev \
     cmake \
@@ -53,15 +55,12 @@ RUN apt-get update &&  \
     libleptonica-dev \
     clang \
     libclang-dev && \
-    # libgpac-dev && \
     git clone https://github.com/CCExtractor/ccextractor.git && \
     cd ccextractor/linux && \
-    git checkout 35e73c1c90ce3ca69394d3523836bb1cdec28f11 && \
+    git checkout c55072677875ee766c6cf388da70eff0a686ca62 && \
     ./build -without-rust && \
     mv ./ccextractor /usr/bin/ccextractor && \
-
     cd / && rm -rf /ccextractor && \
-    if uname -m | grep -q x86; then \
 
     # Setup Intel Package Repository
     curl -sSL https://repositories.intel.com/gpu/intel-graphics.key | \
