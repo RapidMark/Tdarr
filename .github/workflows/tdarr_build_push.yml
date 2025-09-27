@@ -1,0 +1,58 @@
+name: Build and Push Docker Images
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_and_push_tdarr_base:
+    name: Build and Push tdarr_base
+    runs-on: ubuntu-latest
+    outputs:
+      date: ${{ steps.date.outputs.date }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract date for tag
+        id: date
+        run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+
+      - name: Build and push tdarr_base Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: /docker/tdarr_base
+          push: true
+          tags: |
+            tdarr_base:noble_${{ steps.date.outputs.date }}
+
+  build_and_push_tdarr_server:
+    name: Build and Push tdarr_server
+    runs-on: ubuntu-latest
+    needs: build_and_push_tdarr_base
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push tdarr_base Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: /docker/tdarr
+          push: true
+          build-args: |
+            VERSION=2.46.01
+            MODULE=Tdarr_Server
+            DATE=${{ needs.build_and_push_tdarr_base.outputs.date }}
+          tags: |
+            tdarr:noble_${{ needs.build_and_push_tdarr_base.outputs.date }}
