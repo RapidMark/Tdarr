@@ -23,13 +23,13 @@ jobs:
         id: date
         run: echo "date=$(date +'%Y%m%d')" >> "$GITHUB_OUTPUT"
 
-      - name: Build and push tdarr_base Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: docker/tdarr_base
-          push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/tdarr_base:noble_${{ steps.date.outputs.date }}
+      # - name: Build and push tdarr_base Docker image
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     context: docker/tdarr_base
+      #     push: true
+      #     tags: |
+      #       ${{ secrets.DOCKERHUB_USERNAME }}/tdarr_base:noble_${{ steps.date.outputs.date }}
 
   build_and_push_tdarr_server:
     name: Build and Push tdarr_server
@@ -48,7 +48,8 @@ jobs:
       - name: Build and push tdarr_base Docker image
         uses: docker/build-push-action@v6
         with:
-          context: docker/tdarr
+          context: .
+          file: docker/tdarr/Dockerfile
           push: true
           build-args: |
             VERSION=2.46.01
