@@ -19,5 +19,5 @@ for i in ${DEVICES}; do
         groupadd -g "${DEVICE_GROUP_ID}" "${DEVICE_GROUP_NAME}"
     fi
 
-    getent group "${DEVICE_GROUP_NAME}" | grep -q Tdarr || usermod -a -G "${DEVICE_GROUP_NAME}" Tdarr
+    getent group "${DEVICE_GROUP_NAME}" | grep -q abc || usermod -a -G "${DEVICE_GROUP_NAME}" abc
 done
