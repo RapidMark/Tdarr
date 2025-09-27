@@ -23,7 +23,7 @@ RUN echo $MODULE && echo $VERSION echo $DATE && \
     echo removing /tdarr_server && \
     rm -rdf /etc/services.d/tdarr_server ; \
     fi && \
-
+    \
     if uname -m | grep -q x86; then \
     MODULE_LINK="${BASE_LINK}/linux_x64/${MODULE}_${DATE}.zip" && \
     NODE_LINK="${BASE_LINK}/linux_x64/Tdarr_Node_${DATE}.zip" ; \
@@ -36,7 +36,7 @@ RUN echo $MODULE && echo $VERSION echo $DATE && \
     MODULE_LINK="${BASE_LINK}/linux_arm/${MODULE}_${DATE}.zip" && \
     NODE_LINK="${BASE_LINK}/linux_arm/Tdarr_Node_${DATE}.zip" ; \
     fi && \
-
+    \
     echo MODULE_LINK=$MODULE_LINK && \
     echo NODE_Link=$NODE_LINK && \
     curl --connect-timeout 120 --retry 5 -o /tmp/${MODULE}.zip -L \
