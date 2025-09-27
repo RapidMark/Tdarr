@@ -1,14 +1,14 @@
-FROM krissmilne/tdarr_base:noble_20250921
-
 ARG VERSION="2.46.01"
 ARG MODULE="Tdarr_Server"
-ARG DATE="2025_08_31T23_25_35z"
+ARG DATE
+
+FROM krissmilne/tdarr_base:noble_${DATE}
 
 ENV WEB_UI_PORT="8265" SERVER_PORT="8266" NODE_PORT="8267" PUID="1000" PGID="1000" UMASK="002" TZ="Etc/UTC" HOME="/home/Tdarr"
 
 ENV MODULE_LINK=""
 ENV NODE_LINK=""
-ENV BASE_LINK="https://storage.tdarr.io/dev/versions/$VERSION"
+ENV BASE_LINK="https://storage.tdarr.io/versions/$VERSION"
 ENV inContainer="true"
 
 COPY docker/root/ /
@@ -25,16 +25,12 @@ RUN echo $MODULE && echo $VERSION echo $DATE && \
     fi && \
     \
     if uname -m | grep -q x86; then \
-    MODULE_LINK="${BASE_LINK}/linux_x64/${MODULE}_${DATE}.zip" && \
-    NODE_LINK="${BASE_LINK}/linux_x64/Tdarr_Node_${DATE}.zip" ; \
+    MODULE_LINK="${BASE_LINK}/linux_x64/${MODULE}.zip" && \
+    NODE_LINK="${BASE_LINK}/linux_x64/Tdarr_Node.zip" ; \
     fi && \
     if uname -m | grep -q aarch64; then \
-    MODULE_LINK="${BASE_LINK}/linux_arm64/${MODULE}_${DATE}.zip" && \
-    NODE_LINK="${BASE_LINK}/linux_arm64/Tdarr_Node_${DATE}.zip" ; \
-    fi && \
-    if uname -m | grep -q armv7l; then \
-    MODULE_LINK="${BASE_LINK}/linux_arm/${MODULE}_${DATE}.zip" && \
-    NODE_LINK="${BASE_LINK}/linux_arm/Tdarr_Node_${DATE}.zip" ; \
+    MODULE_LINK="${BASE_LINK}/linux_arm64/${MODULE}.zip" && \
+    NODE_LINK="${BASE_LINK}/linux_arm64/Tdarr_Node.zip" ; \
     fi && \
     \
     echo MODULE_LINK=$MODULE_LINK && \
