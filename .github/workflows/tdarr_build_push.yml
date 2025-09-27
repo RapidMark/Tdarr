@@ -1,6 +1,8 @@
 name: Build and Push Docker Images
 
 on:
+  schedule:
+    - cron: '0 19 * * 5' # At 19:00 on Friday UTC (AEST 5:00 Saturday)
   workflow_dispatch:
 
 jobs:
@@ -23,13 +25,14 @@ jobs:
         id: date
         run: echo "date=$(date +'%Y%m%d')" >> "$GITHUB_OUTPUT"
 
-      # - name: Build and push tdarr_base Docker image
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     context: docker/tdarr_base
-      #     push: true
-      #     tags: |
-      #       ${{ secrets.DOCKERHUB_USERNAME }}/tdarr_base:noble_${{ steps.date.outputs.date }}
+      - name: Build and push tdarr_base Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/tdarr_base
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/tdarr_base:noble_${{ steps.date.outputs.date }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/tdarr_base:latest
 
   build_and_push_tdarr_server:
     name: Build and Push tdarr_server
@@ -57,3 +60,4 @@ jobs:
             DATE=${{ needs.build_and_push_tdarr_base.outputs.date }}
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/tdarr:noble_${{ needs.build_and_push_tdarr_base.outputs.date }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/tdarr:latest
