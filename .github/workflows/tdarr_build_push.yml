@@ -29,7 +29,7 @@ jobs:
           context: docker/tdarr_base
           push: true
           tags: |
-            tdarr_base:noble_${{ steps.date.outputs.date }}
+            krissmilne/tdarr_base:noble_${{ steps.date.outputs.date }}
 
   build_and_push_tdarr_server:
     name: Build and Push tdarr_server
@@ -55,4 +55,4 @@ jobs:
             MODULE=Tdarr_Server
             DATE=${{ needs.build_and_push_tdarr_base.outputs.date }}
           tags: |
-            tdarr:noble_${{ needs.build_and_push_tdarr_base.outputs.date }}
+            krissmilne/tdarr:noble_${{ needs.build_and_push_tdarr_base.outputs.date }}
