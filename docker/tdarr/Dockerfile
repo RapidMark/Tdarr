@@ -6,6 +6,8 @@ FROM krissmilne/tdarr_base:noble_${DATE}
 
 ENV WEB_UI_PORT="8265" SERVER_PORT="8266" NODE_PORT="8267" PUID="1000" PGID="1000" UMASK="002" TZ="Etc/UTC" HOME="/home/Tdarr"
 
+ENV VERSION="${VERSION}"
+ENV MODULE="${MODULE}"
 ENV MODULE_LINK=""
 ENV NODE_LINK=""
 ENV BASE_LINK="https://storage.tdarr.io/versions/$VERSION"
