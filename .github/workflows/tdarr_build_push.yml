@@ -26,7 +26,7 @@ jobs:
       - name: Build and push tdarr_base Docker image
         uses: docker/build-push-action@v6
         with:
-          context: /docker/tdarr_base
+          context: docker/tdarr_base
           push: true
           tags: |
             tdarr_base:noble_${{ steps.date.outputs.date }}
@@ -48,7 +48,7 @@ jobs:
       - name: Build and push tdarr_base Docker image
         uses: docker/build-push-action@v6
         with:
-          context: /docker/tdarr
+          context: docker/tdarr
           push: true
           build-args: |
             VERSION=2.46.01
