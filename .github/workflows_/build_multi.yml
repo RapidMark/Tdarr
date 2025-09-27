@@ -5,8 +5,8 @@ on:
   #  types: [closed]
   # push:
   #   branches: ["master"]
-  pull_request:
-    branches: ["**"]
+  # pull_request:
+  #   branches: ["**"]
 
 jobs:
   build_multi_node:
@@ -35,7 +35,7 @@ jobs:
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@master
-      
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -83,7 +83,7 @@ jobs:
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@master
-      
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -104,4 +104,4 @@ jobs:
       - name: Buildx
         run: |
           cd docker && make build-server USERNAME=${{ steps.vars.outputs.username }} REPO=_acc TAG=dev VERSION=${{ steps.package-version.outputs.current-version }}
-         
+
