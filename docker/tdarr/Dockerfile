@@ -1,4 +1,4 @@
-FROM krissmilne/tdarr_base:latest
+FROM krissmilne/tdarr_base:noble_20250921
 
 ARG VERSION="2.46.01"
 ARG MODULE="Tdarr_Server"
