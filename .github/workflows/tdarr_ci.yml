@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint_bash:
+  super_linter:
     runs-on: ubuntu-latest
     name: lint_bash
 
