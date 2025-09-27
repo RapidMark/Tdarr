@@ -1,0 +1,25 @@
+name: tdarr_ci
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+    paths:
+      - 'docker/**'
+  workflow_dispatch:
+
+jobs:
+  lint_bash:
+    runs-on: ubuntu-latest
+    name: lint_bash
+
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Super-linter
+        uses: super-linter/super-linter@v8.1.0
