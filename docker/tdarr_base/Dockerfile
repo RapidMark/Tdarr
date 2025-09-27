@@ -26,7 +26,7 @@ RUN apt-get update &&  \
     # ========================================================================================
     #                                   Install Nodejs 22.x
     # ========================================================================================
-    curl -s https://deb.nodesource.com/setup_22.x | bash && apt install nodejs -y && node -v && \
+    curl -s https://deb.nodesource.com/setup_22.x | bash && apt-get install nodejs -y && node -v && \
     apt-get update && \
     apt-get install -y unzip wget comskip \
     # for apprise
@@ -66,7 +66,7 @@ RUN apt-get update &&  \
     # ========================================================================================
     ARCH="$(dpkg --print-architecture)"; \
     wget https://github.com/jellyfin/jellyfin-ffmpeg/releases/download/v${FFMPEGVERSION}/jellyfin-ffmpeg7_${FFMPEGVERSION}-noble_${ARCH}.deb && \
-    apt install -y \
+    apt-get install -y \
     ./jellyfin-ffmpeg7_${FFMPEGVERSION}-noble_${ARCH}.deb && \
     rm -rf ./jellyfin-ffmpeg7_${FFMPEGVERSION}-noble_${ARCH}.deb && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg && \
@@ -79,7 +79,7 @@ RUN apt-get update &&  \
     add-apt-repository -y ppa:kobuk-team/intel-graphics && \
     apt-get update && \
     # Install Intel compute related packages
-    apt install -y \
+    apt-get install -y \
     libze-intel-gpu1 \
     libze1 \
     intel-metrics-discovery \
