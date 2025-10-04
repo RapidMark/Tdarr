@@ -1,23 +1,73 @@
 #!/usr/bin/with-contenv bash
+set -euo pipefail
 
-DEVICES=$(find /dev/dri /dev/dvb /dev/vchiq /dev/vcsm /dev/vc-mem /dev/video1? -type c -print 2>/dev/null)
+# enumerate common video device nodes (safe if some don't exist)
+DEVICES=$(find /dev/dri /dev/dvb /dev/vchiq /dev/vcsm /dev/vc-mem /dev/video1? -type c -print 2>/dev/null || true)
 
-if hash nvidia-smi 2>/dev/null; then
-    echo "Runtime detected"
-    echo "GPU: $(nvidia-smi --query-gpu=name --format=csv,noheader)"
-    echo "Capabilities: ${NVIDIA_DRIVER_CAPABILITIES} Devices: ${NVIDIA_VISIBLE_DEVICES}"
+# ------------------------------------------------------------------------------
+# NVIDIA probe (leave as-is)
+# ------------------------------------------------------------------------------
+if command -v nvidia-smi >/dev/null 2>&1; then
+  echo "NVIDIA runtime detected"
+  echo "GPU: $(nvidia-smi --query-gpu=name --format=csv,noheader)"
+  echo "Capabilities: ${NVIDIA_DRIVER_CAPABILITIES:-<unset>}  Devices: ${NVIDIA_VISIBLE_DEVICES:-<unset>}"
 fi
 
-for i in ${DEVICES}; do
-    # Get the group ID and NAME (if exists) for the current device in the list
-    DEVICE_GROUP_ID=$(stat -c '%g' "$i")
-    DEVICE_GROUP_NAME=$(getent group "${DEVICE_GROUP_ID}" | awk -F: '{print $1}')
+# ------------------------------------------------------------------------------
+# AMD/VA-API probe
+# ------------------------------------------------------------------------------
+# Default to radeonsi if user didn't explicitly override.
+export LIBVA_DRIVER_NAME="${LIBVA_DRIVER_NAME:-radeonsi}"
+export LIBVA_DRIVERS_PATH="${LIBVA_DRIVERS_PATH:-/usr/lib/x86_64-linux-gnu/dri}"
 
-    # If group NAME doesn't exist, create it and assign it the group ID
-    if [[ -z "${DEVICE_GROUP_NAME}" ]]; then
-        DEVICE_GROUP_NAME="video${RANDOM}"
-        groupadd -g "${DEVICE_GROUP_ID}" "${DEVICE_GROUP_NAME}"
+# Pick the first render node if available (preferred for VA-API)
+FIRST_RENDER_NODE="$(ls -1 /dev/dri/renderD* 2>/dev/null | head -n1 || true)"
+if [[ -n "${FIRST_RENDER_NODE}" ]]; then
+  echo "VA-API: probing ${FIRST_RENDER_NODE} (driver=${LIBVA_DRIVER_NAME})"
+  # Print a concise vainfo line; don't fail container if it errors.
+  if command -v vainfo >/dev/null 2>&1; then
+    # Try DRM path first; fall back to default if needed.
+    (vainfo --display drm --device "${FIRST_RENDER_NODE}" 2>&1 || true) | \
+      awk 'NR<=12' | sed 's/^/  /'
+  else
+    echo "  'vainfo' not found; skipping VA-API probe."
+  fi
+else
+  # No render node; still provide a hint if /dev/dri exists.
+  if [[ -d /dev/dri ]]; then
+    echo "VA-API: /dev/dri present but no renderD* nodes found."
+  else
+    echo "VA-API: /dev/dri not present in container."
+  fi
+fi
+
+# ------------------------------------------------------------------------------
+# Device group alignment: ensure user 'abc' can access all GPU/VA devices
+# ------------------------------------------------------------------------------
+if id -u abc >/dev/null 2>&1; then
+  for dev in ${DEVICES}; do
+    # group id of the device node
+    GID="$(stat -c '%g' "${dev}")"
+    # derive or create a group name for that GID
+    GNAME="$(getent group "${GID}" | awk -F: '{print $1}')"
+    if [[ -z "${GNAME}" ]]; then
+      GNAME="video${RANDOM}"
+      # If this races in rare cases, ignore failure if group already exists.
+      groupadd -g "${GID}" "${GNAME}" 2>/dev/null || true
     fi
+    # add abc to the device's group if not already a member
+    if ! id -nG abc | tr ' ' '\n' | grep -qx "${GNAME}"; then
+      usermod -a -G "${GNAME}" abc || true
+    fi
+  done
+else
+  echo "Warning: user 'abc' not found; skipping device group alignment."
+fi
 
-    getent group "${DEVICE_GROUP_NAME}" | grep -q abc || usermod -a -G "${DEVICE_GROUP_NAME}" abc
-done
+# ------------------------------------------------------------------------------
+# Friendly summary
+# ------------------------------------------------------------------------------
+echo "Init summary:"
+echo "  LIBVA_DRIVER_NAME=${LIBVA_DRIVER_NAME}"
+echo "  LIBVA_DRIVERS_PATH=${LIBVA_DRIVERS_PATH}"
+[[ -n "${FIRST_RENDER_NODE:-}" ]] && echo "  VA-API device: ${FIRST_RENDER_NODE}"
