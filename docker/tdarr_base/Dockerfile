@@ -1,6 +1,7 @@
 FROM lsiobase/ubuntu:noble
 
 ENV \
+    LIBVA_DRIVER_NAME="radeonsi" \
     LIBVA_DRIVERS_PATH="/usr/lib/x86_64-linux-gnu/dri" \
     LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu" \
     NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
