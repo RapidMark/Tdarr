@@ -1,6 +1,6 @@
 ARG DATE
 
-FROM krissmilne/tdarr_base:noble_${DATE}
+FROM RapidMark/tdarr_base:noble_${DATE}
 
 ARG VERSION
 ARG MODULE
