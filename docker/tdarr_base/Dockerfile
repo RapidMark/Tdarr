@@ -6,7 +6,8 @@ ENV \
     NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     NVIDIA_VISIBLE_DEVICES="all" \
     HANDBRAKE="1.10.2" \
-    FFMPEGVERSION="7.1.2-1"
+    FFMPEGVERSION="7.1.2-1" \
+    DOTNET_ROLL_FORWARD="Major"
 
 ENV WEB_UI_PORT="8265" SERVER_PORT="8266" NODE_PORT="8267" PUID="1000" PGID="1000" UMASK="002" TZ="Etc/UTC" HOME="/home/Tdarr"
 # ========================================================================================
@@ -33,6 +34,21 @@ RUN apt-get update &&  \
     pipx && \
     pipx install apprise && \
     ln -s /root/.local/bin/apprise /usr/local/bin/apprise && \
+    # ========================================================================================
+    #                        Minimal VA-API utils + Tesseract language packs
+    # ========================================================================================
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+      vainfo mesa-va-drivers libva2 libdrm2 \
+      tesseract-ocr-osd tesseract-ocr-eng tesseract-ocr-fra tesseract-ocr-ara tesseract-ocr-chi-sim tesseract-ocr-chi-tra \
+      tesseract-ocr-deu tesseract-ocr-ita tesseract-ocr-por tesseract-ocr-nld tesseract-ocr-rus \
+      tesseract-ocr-jpn tesseract-ocr-kor tesseract-ocr-spa tesseract-ocr-hin tesseract-ocr-heb && \
+    # ========================================================================================
+    #                             .NET 9 runtime for PgsToSrt
+    # ========================================================================================
+    add-apt-repository -y ppa:dotnet/backports && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends dotnet-runtime-9.0 && \
     # ========================================================================================
     #                                   Install MkvToolNIX
     # ========================================================================================
@@ -195,6 +211,17 @@ RUN apt-get update &&  \
     apt-get install -y handbrake-cli && \
     echo "ffmpeg installed above" ; \
     fi && \
+    # ========================================================================================
+    #                                   Install PgsToSrt
+    # ========================================================================================
+    tmp=/tmp/pgs && mkdir -p "$tmp" && cd "$tmp" && \
+    curl -L -o pgs.zip https://github.com/Tentacule/PgsToSrt/releases/download/v1.4.7/PgsToStr-1.4.7.zip && \
+    mkdir -p /opt/pgstosrt && unzip -q pgs.zip -d /opt/pgstosrt && \
+    printf '%s\n' '#!/usr/bin/env bash' \
+      'set -euo pipefail' \
+      'exec dotnet /opt/pgstosrt/PgsToSrt.dll "$@" 2> >(grep -v "Detected tesseract language data" >&2)' \
+      > /usr/local/bin/pgs2srt && chmod +x /usr/local/bin/pgs2srt && \
+    rm -rf "$tmp" && \
     # ========================================================================================
     #                             Cleanup Unused Packages
     # ========================================================================================
