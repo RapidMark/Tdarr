@@ -40,10 +40,11 @@ RUN apt-get update &&  \
     # ========================================================================================
     apt-get update && \
     apt-get install -y --no-install-recommends \
-      vainfo mesa-va-drivers libva2 libdrm2 \
-      tesseract-ocr-osd tesseract-ocr-eng tesseract-ocr-fra tesseract-ocr-ara tesseract-ocr-chi-sim tesseract-ocr-chi-tra \
-      tesseract-ocr-deu tesseract-ocr-ita tesseract-ocr-por tesseract-ocr-nld tesseract-ocr-rus \
-      tesseract-ocr-jpn tesseract-ocr-kor tesseract-ocr-spa tesseract-ocr-hin tesseract-ocr-heb && \
+      vainfo mesa-va-drivers libva2 libdrm2 tesseract-ocr tesseract-ocr-osd \
+      tesseract-ocr-eng tesseract-ocr-fra tesseract-ocr-spa tesseract-ocr-deu \
+      tesseract-ocr-ita tesseract-ocr-jpn tesseract-ocr-kor tesseract-ocr-ara \
+      tesseract-ocr-hin tesseract-ocr-heb tesseract-ocr-nld tesseract-ocr-por \
+      tesseract-ocr-rus tesseract-ocr-chi-sim tesseract-ocr-chi-tra && \
     # ========================================================================================
     #                             .NET 9 runtime for PgsToSrt
     # ========================================================================================
@@ -88,6 +89,9 @@ RUN apt-get update &&  \
     rm -rf ./jellyfin-ffmpeg7_${FFMPEGVERSION}-noble_${ARCH}.deb && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/tdarr-ffmpeg && \
+    ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe && \
+    ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/tdarr-ffprobe && \
+
     # ========================================================================================
     #                               Install intel media packages
     # ========================================================================================
