@@ -35,7 +35,9 @@ RUN ./configure \
 # Sanity-check: ensure crop_vaapi is present
 RUN /usr/local/bin/ffmpeg -filters | grep crop_vaapi || (echo "crop_vaapi missing!" && exit 1)
 
-
+##############################################
+# Stage 2: Tdarr base image
+##############################################
 FROM lsiobase/ubuntu:noble
 
 ENV \
@@ -264,25 +266,26 @@ RUN apt-get update &&  \
       'set -euo pipefail' \
       'exec dotnet /opt/pgstosrt/PgsToSrt.dll "$@" 2> >(grep -v "Detected tesseract language data" >&2)' \
       > /usr/local/bin/pgs2srt && chmod +x /usr/local/bin/pgs2srt && \
-    rm -rf "$tmp" && \
-    # =====================================================================
-    # Override with custom FFmpeg (VAAPI + crop_vaapi) for tdarr-ffmpeg
-    # =====================================================================
-    COPY --from=ffmpeg-builder /usr/local /usr/local
+    rm -rf "$tmp"
+    
+# =====================================================================
+# Override with custom FFmpeg (VAAPI + crop_vaapi) for tdarr-ffmpeg
+# =====================================================================
+COPY --from=ffmpeg-builder /usr/local /usr/local
 
-    # Ensure runtime sees the new libs
-    ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
+# Ensure runtime sees the new libs
+ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 
-    # Point tdarr-ffmpeg/ffprobe at our custom build
-    RUN ln -sf /usr/local/bin/ffmpeg /usr/local/bin/tdarr-ffmpeg && \
+# Point tdarr-ffmpeg/ffprobe at our custom build
+RUN ln -sf /usr/local/bin/ffmpeg /usr/local/bin/tdarr-ffmpeg && \
     ln -sf /usr/local/bin/ffprobe /usr/local/bin/tdarr-ffprobe && \
     ffmpeg -filters | grep crop_vaapi
 
-    # ========================================================================================
-    #                             Cleanup Unused Packages
-    # ========================================================================================
-    # Important: Don't add auto-remove, as it will remove some dependencies
-    trash-empty && \
+# ========================================================================================
+#                             Cleanup Unused Packages
+# ========================================================================================
+# Important: Don't add auto-remove, as it will remove some dependencies
+RUN trash-empty && \
     apt-get purge -y \
     git \
     pipx \
