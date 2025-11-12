@@ -1,3 +1,41 @@
+##############################################
+# Stage 1: Build FFmpeg with VAAPI + crop_vaapi
+##############################################
+FROM ubuntu:24.04 AS ffmpeg-builder
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    autoconf automake build-essential cmake git libtool pkg-config \
+    yasm nasm \
+    libdrm-dev libva-dev libx11-dev libvdpau-dev \
+    ca-certificates wget && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src
+
+# Get FFmpeg (you can pin to a tag like n7.1 if you want reproducibility)
+RUN git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
+WORKDIR /src/ffmpeg
+
+RUN ./configure \
+    --prefix=/usr/local \
+    --disable-debug \
+    --disable-doc \
+    --disable-static \
+    --enable-shared \
+    --enable-gpl \
+    --enable-libdrm \
+    --enable-vaapi \
+    --enable-vdpau && \
+    make -j"$(nproc)" && \
+    make install
+
+# Sanity-check: ensure crop_vaapi is present
+RUN /usr/local/bin/ffmpeg -filters | grep crop_vaapi || (echo "crop_vaapi missing!" && exit 1)
+
+
 FROM lsiobase/ubuntu:noble
 
 ENV \
@@ -227,6 +265,19 @@ RUN apt-get update &&  \
       'exec dotnet /opt/pgstosrt/PgsToSrt.dll "$@" 2> >(grep -v "Detected tesseract language data" >&2)' \
       > /usr/local/bin/pgs2srt && chmod +x /usr/local/bin/pgs2srt && \
     rm -rf "$tmp" && \
+    # =====================================================================
+    # Override with custom FFmpeg (VAAPI + crop_vaapi) for tdarr-ffmpeg
+    # =====================================================================
+    COPY --from=ffmpeg-builder /usr/local /usr/local
+
+    # Ensure runtime sees the new libs
+    ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
+
+    # Point tdarr-ffmpeg/ffprobe at our custom build
+    RUN ln -sf /usr/local/bin/ffmpeg /usr/local/bin/tdarr-ffmpeg && \
+    ln -sf /usr/local/bin/ffprobe /usr/local/bin/tdarr-ffprobe && \
+    ffmpeg -filters | grep crop_vaapi
+
     # ========================================================================================
     #                             Cleanup Unused Packages
     # ========================================================================================
