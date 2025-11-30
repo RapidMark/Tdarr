@@ -55,7 +55,7 @@ jobs:
           file: docker/tdarr/Dockerfile
           push: true
           build-args: |
-            VERSION=2.46.01
+            VERSION=latest
             MODULE=Tdarr_Server
             DATE=${{ needs.build_and_push_tdarr_base.outputs.date }}
           tags: |
