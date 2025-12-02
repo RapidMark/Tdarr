@@ -66,9 +66,9 @@ RUN echo $MODULE && echo $VERSION echo $DATE && \
     chown -R abc:abc /app && \
     cp -r /app /app_test && \
     # test
-    runTests=true runDockerTests=false node /app_test/$MODULE/src/main.js && \
+    runTests=true runDockerTests=false node /app_test/$MODULE/srcug/main.js && \
     if [ "$MODULE" = "Tdarr_Server" ]; then \
-    runTests=true runDockerTests=false node /app_test/Tdarr_Node/src/main.js ; \
+    runTests=true runDockerTests=false node /app_test/Tdarr_Node/srcug/main.js ; \
     fi && \
     rm -rdf /app_test
 
