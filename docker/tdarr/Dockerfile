@@ -67,7 +67,7 @@ RUN echo $MODULE && echo $VERSION && echo $BUILD_DATE && \
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = "${BUILD_DATE}";
-EOF \
+EOF 
       ; fi; \
     done && \
     \
