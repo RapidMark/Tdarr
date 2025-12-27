@@ -10,7 +10,7 @@ jobs:
     name: Build and Push tdarr_base
     runs-on: ubuntu-latest
     outputs:
-      date: ${{ steps.date.outputs.date }}
+      builddatetime: ${{ steps.buildinfo.outputs.builddatetime }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v5
@@ -21,17 +21,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract date for tag
-        id: date
-        run: echo "date=$(date +'%Y%m%d')" >> "$GITHUB_OUTPUT"
+      - name: Extract datetime for tag and build
+        id: buildinfo
+        run: echo "builddatetime=$(date -u +'%Y%m%dT%H%M%SZ')" >> "$GITHUB_OUTPUT"
 
       - name: Build and push tdarr_base Docker image
         uses: docker/build-push-action@v6
         with:
           context: docker/tdarr_base
           push: true
+          build-args: |
+            BUILD_DATE=${{ steps.buildinfo.outputs.builddatetime }}
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/tdarr_base:noble_${{ steps.date.outputs.date }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/tdarr_base:noble_${{ steps.buildinfo.outputs.builddatetime }}
             ${{ secrets.DOCKERHUB_USERNAME }}/tdarr_base:latest
 
   build_and_push_tdarr_server:
@@ -48,7 +50,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push tdarr_base Docker image
+      - name: Build and push tdarr_server Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -57,8 +59,8 @@ jobs:
           build-args: |
             VERSION=2.58.02
             MODULE=Tdarr_Server
-            BUILD_DATE=${{ needs.build_and_push_tdarr_base.outputs.date }}
+            BUILD_DATE=${{ needs.build_and_push_tdarr_base.outputs.builddatetime }}
             RUN_TESTS=false
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/tdarr:noble_${{ needs.build_and_push_tdarr_base.outputs.date }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/tdarr:noble_${{ needs.build_and_push_tdarr_base.outputs.builddatetime }}
             ${{ secrets.DOCKERHUB_USERNAME }}/tdarr:latest
