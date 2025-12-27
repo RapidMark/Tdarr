@@ -1,7 +1,7 @@
 USERNAME=RapidMark
 REPO=_acc
 TAG=dev
-VERSION=2.47.01
+VERSION=2.58.02
 # PLATFORMS=linux/amd64
 # PLATFORMS=linux/amd64,linux/arm/v7
 PLATFORMS=linux/amd64,linux/arm64,linux/arm/v7
