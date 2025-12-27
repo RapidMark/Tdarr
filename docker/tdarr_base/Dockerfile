@@ -12,6 +12,9 @@ ENV \
     DOTNET_ROLL_FORWARD="Major"
 
 ENV WEB_UI_PORT="8265" SERVER_PORT="8266" NODE_PORT="8267" PUID="1000" PGID="1000" UMASK="002" TZ="Etc/UTC" HOME="/home/Tdarr"
+
+ARG BUILD_DATE
+ENV BUILD_DATE=$BUILD_DATE
 # ========================================================================================
 #                                   Install dependencies
 # ========================================================================================
@@ -36,6 +39,12 @@ RUN apt-get update &&  \
     pipx && \
     pipx install apprise && \
     ln -s /root/.local/bin/apprise /usr/local/bin/apprise && \
+
+    # ========================================================================================
+    # Install pnpm globally
+    # ========================================================================================
+    npm install -g pnpm \
+    
     # ========================================================================================
     #                        Minimal VA-API utils + Tesseract language packs
     # ========================================================================================
