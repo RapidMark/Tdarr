@@ -54,8 +54,27 @@ RUN echo $MODULE && echo $VERSION && echo $BUILD_DATE && \
     fi && \
     rm -rdf /tmp/${MODULE}.zip && \
     rm -rdf /tmp/Tdarr_Node.zip && \
-    # Patch buildDate after all unzips
-    find /app/ -type f -name '*.js' -exec sed -i "s/buildDate[ =:]*['\\\"]\\([^'\\\"]*\\)['\\\"]/buildDate: '${BUILD_DATE}'/g" {} + && \
+    \
+    # Patch buildDate safely (ONLY the buildDate module; do NOT mass-rewrite JS bundles)
+    for f in \
+      "/app/${MODULE}/srcug/commonModules/buildDate.js" \
+      "/app/Tdarr_Node/srcug/commonModules/buildDate.js" \
+      "/app/Tdarr_Server/srcug/commonModules/buildDate.js" \
+    ; do \
+      if [ -f "$f" ]; then \
+        echo "Patching buildDate in $f => ${BUILD_DATE}" && \
+        cat > "$f" <<EOF
+'use strict';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = "${BUILD_DATE}";
+EOF \
+      ; fi; \
+    done && \
+    \
+    # Optional: fail build fast if key bundles are syntactically invalid
+    if [ -f "/app/Tdarr_Node/srcug/config/config.js" ]; then node -c "/app/Tdarr_Node/srcug/config/config.js"; fi && \
+    if [ -f "/app/Tdarr_Server/srcug/commonModules/configPath.js" ]; then node -c "/app/Tdarr_Server/srcug/commonModules/configPath.js"; fi && \
+    \
     chmod -R 755 /app && \
     groupmod -o -g ${PGID} abc && \
     usermod -o -u ${PUID} abc && \
@@ -65,6 +84,7 @@ RUN echo $MODULE && echo $VERSION && echo $BUILD_DATE && \
       runTests=true runDockerTests=false node /app_test/Tdarr_Node/srcug/main.js ; \
     fi && \
     rm -rdf /app_test
+
 
 EXPOSE ${NODE_PORT}
 EXPOSE ${WEB_UI_PORT}
