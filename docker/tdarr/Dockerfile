@@ -1,6 +1,6 @@
-ARG DATE
+ARG BUILD_DATE
 
-FROM rapidmark/tdarr_base:noble_${DATE}
+FROM rapidmark/tdarr_base:noble_${BUILD_DATE}
 
 ARG VERSION
 ARG MODULE
@@ -21,7 +21,7 @@ RUN chmod +x /etc/services.d/tdarr_server/run && \
     chmod +x /etc/cont-init.d/02-hw-transcoding
 
 # handle tdarr binaries
-RUN echo $MODULE && echo $VERSION echo $DATE && \
+RUN echo $MODULE && echo $VERSION echo $BUILD_DATE && \
     if [ "$MODULE" = "Tdarr_Node" ]; then \
     echo removing /tdarr_server && \
     rm -rdf /etc/services.d/tdarr_server ; \
