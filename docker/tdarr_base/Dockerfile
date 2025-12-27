@@ -44,6 +44,7 @@ RUN apt-get update &&  \
     # Install pnpm globally
     # ========================================================================================
     npm install -g pnpm \
+     && ln -s $(which pnpm) /usr/local/bin/pnpm \
     
     # ========================================================================================
     #                        Minimal VA-API utils + Tesseract language packs
