@@ -100,7 +100,7 @@ RUN apt-get update &&  \
     ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/tdarr-ffmpeg && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe && \
-    ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/tdarr-ffprobe
+    ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/tdarr-ffprobe \
 
     # ========================================================================================
     #                               Install intel media packages
