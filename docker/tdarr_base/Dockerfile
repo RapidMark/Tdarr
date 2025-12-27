@@ -9,6 +9,7 @@ ENV \
     NVIDIA_VISIBLE_DEVICES="all" \
     HANDBRAKE="1.10.2" \
     FFMPEGVERSION="7.1.3-1" \
+    ARCH="$(dpkg --print-architecture)" \
     DOTNET_ROLL_FORWARD="Major"
 
 ENV WEB_UI_PORT="8265" SERVER_PORT="8266" NODE_PORT="8267" PUID="1000" PGID="1000" UMASK="002" TZ="Etc/UTC" HOME="/home/Tdarr"
