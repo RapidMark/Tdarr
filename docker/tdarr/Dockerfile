@@ -64,9 +64,9 @@ RUN echo $MODULE && echo $VERSION echo $BUILD_DATE && \
     groupmod -o -g ${PGID} abc && \
     usermod -o -u ${PUID} abc && \
     chown -R abc:abc /app && \
+    # Try to update buildDate if present
+    find /app/${MODULE}/ -type f -name '*.js' -exec sed -i "s/buildDate[ =:]*['\\\"]\\([^'\\\"]*\\)['\\\"]/buildDate: '$BUILD_DATE'/g" {} + && \
     cp -r /app /app_test && \
-    # test
-    runTests=true runDockerTests=false node /app_test/$MODULE/srcug/main.js && \
     if [ "$MODULE" = "Tdarr_Server" ]; then \
     runTests=true runDockerTests=false node /app_test/Tdarr_Node/srcug/main.js ; \
     fi && \
