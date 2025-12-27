@@ -9,7 +9,6 @@ ENV \
     NVIDIA_VISIBLE_DEVICES="all" \
     HANDBRAKE="1.10.2" \
     FFMPEGVERSION="7.1.3-1" \
-    ARCH="$(dpkg --print-architecture)" \
     DOTNET_ROLL_FORWARD="Major"
 
 ENV WEB_UI_PORT="8265" SERVER_PORT="8266" NODE_PORT="8267" PUID="1000" PGID="1000" UMASK="002" TZ="Etc/UTC" HOME="/home/Tdarr"
@@ -94,15 +93,14 @@ RUN apt-get update &&  \
     # ========================================================================================
     #                                   Install Jellyfin FFmpeg
     # ========================================================================================
-    ARCH="$(dpkg --print-architecture)"; \
-    wget https://github.com/jellyfin/jellyfin-ffmpeg/releases/download/v${FFMPEGVERSION}/jellyfin-ffmpeg7_${FFMPEGVERSION}-noble_${ARCH}.deb && \
-    apt-get install -y \
-    ./jellyfin-ffmpeg7_${FFMPEGVERSION}-noble_${ARCH}.deb && \
+    ARCH="$(dpkg --print-architecture)" && \
+    wget "https://github.com/jellyfin/jellyfin-ffmpeg/releases/download/v${FFMPEGVERSION}/jellyfin-ffmpeg7_${FFMPEGVERSION}-noble_${ARCH}.deb" && \
+    apt-get install -y ./jellyfin-ffmpeg7_${FFMPEGVERSION}-noble_${ARCH}.deb && \
     rm -rf ./jellyfin-ffmpeg7_${FFMPEGVERSION}-noble_${ARCH}.deb && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/tdarr-ffmpeg && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe && \
-    ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/tdarr-ffprobe && \
+    ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/tdarr-ffprobe
 
     # ========================================================================================
     #                               Install intel media packages
