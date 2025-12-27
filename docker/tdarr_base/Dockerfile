@@ -94,13 +94,14 @@ RUN apt-get update &&  \
     #                                   Install Jellyfin FFmpeg
     # ========================================================================================
     ARCH="$(dpkg --print-architecture)" && \
-    wget "https://github.com/jellyfin/jellyfin-ffmpeg/releases/download/v${FFMPEGVERSION}/jellyfin-ffmpeg7_${FFMPEGVERSION}-noble_${ARCH}.deb" && \
-    apt-get install -y ./jellyfin-ffmpeg7_${FFMPEGVERSION}-noble_${ARCH}.deb && \
+    wget https://github.com/jellyfin/jellyfin-ffmpeg/releases/download/v${FFMPEGVERSION}/jellyfin-ffmpeg7_${FFMPEGVERSION}-noble_${ARCH}.deb && \
+    apt-get install -y \
+    ./jellyfin-ffmpeg7_${FFMPEGVERSION}-noble_${ARCH}.deb && \
     rm -rf ./jellyfin-ffmpeg7_${FFMPEGVERSION}-noble_${ARCH}.deb && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/tdarr-ffmpeg && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe && \
-    ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/tdarr-ffprobe \
+    ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/tdarr-ffprobe && \
 
     # ========================================================================================
     #                               Install intel media packages
