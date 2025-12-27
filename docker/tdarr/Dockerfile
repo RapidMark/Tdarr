@@ -38,7 +38,7 @@ RUN echo $MODULE && echo $VERSION && echo $BUILD_DATE && \
     ln -sf $(which pnpm) /usr/local/bin/pnpm && \
     echo MODULE_LINK=$MODULE_LINK && \
     echo NODE_LINK=$NODE_LINK && \
-    curl --connect-timeout 120 --retry 5 -o /tmp/${MODULE}.zip -L "$MODULE_LINK"  && \
+    curl --connect-timeout 120 --retry 5 -o /tmp/${MODULE}.zip -L "$MODULE_LINK" && \
     unzip -q /tmp/${MODULE}.zip -d /app/${MODULE} -x *.exe && \
     rm -rdf /app/${MODULE}/${MODULE} && \
     rm -rdf /app/${MODULE}/${MODULE}_Tray && \
@@ -56,13 +56,13 @@ RUN echo $MODULE && echo $VERSION && echo $BUILD_DATE && \
     rm -rdf /tmp/Tdarr_Node.zip && \
     \
     # Patch buildDate safely (ONLY the buildDate module; do NOT mass-rewrite JS bundles)
-for f in /app/*/srcug/commonModules/buildDate.js; do
-  if [ -f "$f" ]; then
-    echo "'use strict';
-Object.defineProperty(exports, \"__esModule\", { value: true });
-exports.default = \"${BUILD_DATE}\";" > "$f"
-  fi
-done && \
+    for f in /app/*/srcug/commonModules/buildDate.js; do \
+      if [ -f "$f" ]; then \
+        echo "'use strict';" > "$f"; \
+        echo "Object.defineProperty(exports, \"__esModule\", { value: true });" >> "$f"; \
+        echo "exports.default = \"${BUILD_DATE}\";" >> "$f"; \
+      fi; \
+    done && \
     \
     # Optional: fail build fast if key bundles are syntactically invalid
     if [ -f "/app/Tdarr_Node/srcug/config/config.js" ]; then node -c "/app/Tdarr_Node/srcug/config/config.js"; fi && \
@@ -77,7 +77,6 @@ done && \
       runTests=true runDockerTests=false node /app_test/Tdarr_Node/srcug/main.js ; \
     fi && \
     rm -rdf /app_test
-
 
 EXPOSE ${NODE_PORT}
 EXPOSE ${WEB_UI_PORT}
