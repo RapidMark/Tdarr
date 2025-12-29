@@ -17,7 +17,7 @@ ENV inContainer="true"
 
 COPY docker/root/ /
 RUN which node && node -v && which npm && npm -v && \
-    npm install -g pnpm && \
+    npm install -g npm@latest pnpm@latest && \
     which pnpm && pnpm -v && \
     chmod +x /etc/services.d/tdarr_server/run && \
     chmod +x /etc/services.d/tdarr_node/run && \
