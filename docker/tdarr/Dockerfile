@@ -7,6 +7,7 @@ ARG MODULE
 
 ENV WEB_UI_PORT="8265" SERVER_PORT="8266" NODE_PORT="8267" PUID="1000" PGID="1000" UMASK="002" TZ="Etc/UTC" HOME="/home/Tdarr"
 
+ENV BUILD_DATE="${DATE}"
 ENV VERSION="${VERSION}"
 ENV MODULE="${MODULE}"
 ENV MODULE_LINK=""
@@ -15,7 +16,8 @@ ENV BASE_LINK="https://storage.tdarr.io/versions/$VERSION"
 ENV inContainer="true"
 
 COPY docker/root/ /
-RUN chmod +x /etc/services.d/tdarr_server/run && \
+RUN npm install -g pnpm && \
+    chmod +x /etc/services.d/tdarr_server/run && \
     chmod +x /etc/services.d/tdarr_node/run && \
     chmod +x /etc/cont-init.d/01-setup-perms && \
     chmod +x /etc/cont-init.d/02-hw-transcoding
