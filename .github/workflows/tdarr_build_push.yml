@@ -10,7 +10,7 @@ jobs:
     name: Build and Push tdarr_base
     runs-on: ubuntu-latest
     outputs:
-      date: ${{ steps.date.outputs.date }}
+      date: ${{ steps.setoutput.outputs.date }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v5
@@ -23,7 +23,11 @@ jobs:
 
       - name: Extract date for tag
         id: date
-        run: echo "date=$(date +'%Y%m%d')" >> "$GITHUB_OUTPUT"
+        run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_ENV
+
+      - name: Set job output
+        id: setoutput
+        run: echo "date=${{ env.date }}" >> $GITHUB_OUTPUT
 
       - name: Build and push tdarr_base Docker image
         uses: docker/build-push-action@v6
@@ -31,7 +35,7 @@ jobs:
           context: docker/tdarr_base
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/tdarr_base:noble_${{ steps.date.outputs.date }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/tdarr_base:noble_${{ steps.setoutput.outputs.date }}
             ${{ secrets.DOCKERHUB_USERNAME }}/tdarr_base:latest
 
   build_and_push_tdarr_server:
@@ -48,7 +52,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push tdarr_base Docker image
+      - name: Build and push tdarr_server Docker image # <-- Correct name here
         uses: docker/build-push-action@v6
         with:
           context: .

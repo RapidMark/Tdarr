@@ -16,7 +16,8 @@ ENV BASE_LINK="https://storage.tdarr.io/versions/$VERSION"
 ENV inContainer="true"
 
 COPY docker/root/ /
-RUN npm install -g pnpm && \
+RUN apt-get update && apt-get install -y nodejs npm && \
+    npm install -g pnpm && \
     chmod +x /etc/services.d/tdarr_server/run && \
     chmod +x /etc/services.d/tdarr_node/run && \
     chmod +x /etc/cont-init.d/01-setup-perms && \
