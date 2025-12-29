@@ -1,21 +1,9 @@
 #!/usr/bin/with-contenv bash
 
-# Set the group ID and user ID for the user "abc"
-groupmod -o -g "${PGID}" abc
-usermod -o -u "${PUID}" abc
 
-# Display the user ID and group ID for the user "abc"
-echo "
-User uid:    $(id -u abc)
-User gid:    $(id -g abc)
--------------------------------------
-"
 
-# Change the ownership of the specified directories to the user "abc"
-chown -R ${PUID}:${PGID} \
-    "${HOME}" \
-    /temp \
-    /logs
+echo "[setup-perms] Container running as: $(id)"
+echo "[setup-perms] No UID/GID or ownership changes performed at runtime."
 
 # Path to the files storing PUID and PGID
 PUID_PATH="/app/server/puid"

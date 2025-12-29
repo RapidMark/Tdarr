@@ -56,9 +56,16 @@ RUN set -eux; \
     rm -rf "$tmp" && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*.deb /root/.cache/*
 
+
 # Copy all custom cont-init.d scripts
 COPY docker/root/etc/cont-init.d/ /etc/cont-init.d/
 RUN chmod +x /etc/cont-init.d/*
+
+# Set abc UID to 99 and primary group to users (GID 100)
+RUN usermod -u 99 abc && groupmod -g 100 users && usermod -g 100 abc
+
+# Ensure abc owns all relevant files and directories
+RUN chown -R abc:users /home/abc /app /config /data /logs /temp || true
 
 USER abc
 
