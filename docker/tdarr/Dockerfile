@@ -16,12 +16,16 @@ ENV BASE_LINK="https://storage.tdarr.io/versions/$VERSION"
 ENV inContainer="true"
 
 COPY docker/root/ /
-RUN apt-get update && apt-get install -y nodejs npm && \
+RUN which node && node -v && which npm && npm -v && \
     npm install -g pnpm && \
+    which pnpm && pnpm -v && \
     chmod +x /etc/services.d/tdarr_server/run && \
     chmod +x /etc/services.d/tdarr_node/run && \
     chmod +x /etc/cont-init.d/01-setup-perms && \
     chmod +x /etc/cont-init.d/02-hw-transcoding
+
+RUN echo 'export PATH="/usr/bin:$PATH"' >> /home/abc/.profile
+RUN su - abc -c 'which pnpm && pnpm -v'
 
 # handle tdarr binaries
 RUN echo $MODULE && echo $VERSION echo $DATE && \
