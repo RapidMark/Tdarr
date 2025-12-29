@@ -24,8 +24,6 @@ RUN which node && node -v && which npm && npm -v && \
     chmod +x /etc/cont-init.d/01-setup-perms && \
     chmod +x /etc/cont-init.d/02-hw-transcoding
 
-RUN ln -sf $(which pnpm) /usr/bin/pnpm
-
 # handle tdarr binaries
 RUN echo $MODULE && echo $VERSION echo $DATE && \
     if [ "$MODULE" = "Tdarr_Node" ]; then \
