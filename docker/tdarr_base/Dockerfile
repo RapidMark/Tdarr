@@ -36,6 +36,8 @@ RUN apt-get update &&  \
     pipx && \
     pipx install apprise && \
     ln -s /root/.local/bin/apprise /usr/local/bin/apprise && \
+    # Install pnpm globally after Node.js is installed
+    npm install -g pnpm && ln -sf $(which pnpm) /usr/local/bin/pnpm && \
     # ========================================================================================
     #                        Minimal VA-API utils + Tesseract language packs
     # ========================================================================================

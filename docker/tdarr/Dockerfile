@@ -16,10 +16,7 @@ ENV BASE_LINK="https://storage.tdarr.io/versions/$VERSION"
 ENV inContainer="true"
 
 COPY docker/root/ /
-RUN which node && node -v && which npm && npm -v && \
-    npm install -g npm@latest pnpm@latest && \
-    which pnpm && pnpm -v && \
-    chmod +x /etc/services.d/tdarr_server/run && \
+RUN chmod +x /etc/services.d/tdarr_server/run && \
     chmod +x /etc/services.d/tdarr_node/run && \
     chmod +x /etc/cont-init.d/01-setup-perms && \
     chmod +x /etc/cont-init.d/02-hw-transcoding
