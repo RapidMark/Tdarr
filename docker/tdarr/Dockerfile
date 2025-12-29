@@ -57,9 +57,15 @@ RUN set -eux; \
     apt-get clean && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*.deb /root/.cache/*
 
 
+
 # Copy all custom cont-init.d scripts
 COPY docker/root/etc/cont-init.d/ /etc/cont-init.d/
 RUN chmod +x /etc/cont-init.d/*
+
+# Copy patched Tdarr service scripts for non-root compatibility
+COPY docker/root/etc/services.d/tdarr_server/run /etc/services.d/tdarr_server/run
+COPY docker/root/etc/services.d/tdarr_node/run /etc/services.d/tdarr_node/run
+RUN chmod +x /etc/services.d/tdarr_server/run /etc/services.d/tdarr_node/run
 
 # Set abc UID to 99 and primary group to users (GID 100)
 RUN usermod -u 99 abc && groupmod -g 100 users && usermod -g 100 abc

@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv bash
+
+echo "Starting Tdarr_Server"
+
+ARCHITECTURE=$(uname -m)
+MAX_OLD_SPACE=""
+
+if [ "$ARCHITECTURE" != "armv7l" ]; then
+    MAX_OLD_SPACE="--max-old-space-size=16384"
+fi
+
+if [ "$(id -u)" -eq 0 ]; then
+    exec s6-setuidgid abc /app/Tdarr_Server/Tdarr_Server
+else
+    exec /app/Tdarr_Server/Tdarr_Server
+fi

@@ -1,0 +1,28 @@
+#!/usr/bin/with-contenv bash
+
+ARCHITECTURE=$(uname -m)
+MAX_OLD_SPACE=""
+
+if [ "$ARCHITECTURE" != "armv7l" ]; then
+    MAX_OLD_SPACE="--max-old-space-size=16384"
+fi
+
+if [ -d "/etc/services.d/tdarr_server" ] && [ "$internalNode" = true ]; then
+    echo "Sleeping for 10 seconds to allow Tdarr_Server to start..."
+    sleep 10
+    echo "Starting Tdarr_Node"
+    if [ "$(id -u)" -eq 0 ]; then
+        exec s6-setuidgid abc /app/Tdarr_Node/Tdarr_Node
+    else
+        exec /app/Tdarr_Node/Tdarr_Node
+    fi
+fi
+
+if [ ! -d "/etc/services.d/tdarr_server" ]; then
+    echo "Starting Tdarr_Node"
+    if [ "$(id -u)" -eq 0 ]; then
+        exec s6-setuidgid abc /app/Tdarr_Node/Tdarr_Node
+    else
+        exec /app/Tdarr_Node/Tdarr_Node
+    fi
+fi
