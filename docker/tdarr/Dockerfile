@@ -56,9 +56,9 @@ RUN set -eux; \
     rm -rf "$tmp" && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*.deb /root/.cache/*
 
-# Only copy HW transcoding script
-COPY docker/root/etc/cont-init.d/01-hw-transcoding /etc/cont-init.d/01-hw-transcoding
-RUN chmod +x /etc/cont-init.d/01-hw-transcoding
+# Copy all custom cont-init.d scripts
+COPY docker/root/etc/cont-init.d/ /etc/cont-init.d/
+RUN chmod +x /etc/cont-init.d/*
 
 USER abc
 
