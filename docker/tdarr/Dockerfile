@@ -24,8 +24,7 @@ RUN which node && node -v && which npm && npm -v && \
     chmod +x /etc/cont-init.d/01-setup-perms && \
     chmod +x /etc/cont-init.d/02-hw-transcoding
 
-RUN echo 'export PATH="/usr/bin:$PATH"' >> /home/abc/.profile
-RUN su - abc -c 'which pnpm && pnpm -v'
+RUN ln -sf $(which pnpm) /usr/bin/pnpm
 
 # handle tdarr binaries
 RUN echo $MODULE && echo $VERSION echo $DATE && \
