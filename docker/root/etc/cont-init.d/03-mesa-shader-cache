@@ -1,12 +1,14 @@
 #!/usr/bin/with-contenv bash
 set -euo pipefail
 
-# Defaults
 PUID="${PUID:-99}"
 PGID="${PGID:-100}"
-CACHE_DIR="${MESA_SHADER_CACHE_DIR:-/tmp/mesa_shader_cache}"
 
-# Ensure directory exists and is writable by Tdarr user
+# Use MESA_SHADER_CACHE_DIR if provided; otherwise use the default Mesa location under HOME.
+CACHE_DIR="${MESA_SHADER_CACHE_DIR:-/home/Tdarr/.cache/mesa_shader_cache}"
+
 mkdir -p "$CACHE_DIR"
+chown -R "$PUID:$PGID" "$(dirname "$CACHE_DIR")"
 chown -R "$PUID:$PGID" "$CACHE_DIR"
+chmod -R 775 "$(dirname "$CACHE_DIR")"
 chmod -R 775 "$CACHE_DIR"
