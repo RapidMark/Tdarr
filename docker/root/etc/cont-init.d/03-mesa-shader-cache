@@ -4,11 +4,17 @@ set -euo pipefail
 PUID="${PUID:-99}"
 PGID="${PGID:-100}"
 
-# Use MESA_SHADER_CACHE_DIR if provided; otherwise use the default Mesa location under HOME.
 CACHE_DIR="${MESA_SHADER_CACHE_DIR:-/home/Tdarr/.cache/mesa_shader_cache}"
+CACHE_PARENT="$(dirname "$CACHE_DIR")"
 
+# Ensure parent + cache dir exist
+mkdir -p "$CACHE_PARENT"
 mkdir -p "$CACHE_DIR"
-chown -R "$PUID:$PGID" "$(dirname "$CACHE_DIR")"
-chown -R "$PUID:$PGID" "$CACHE_DIR"
-chmod -R 775 "$(dirname "$CACHE_DIR")"
-chmod -R 775 "$CACHE_DIR"
+
+# Make cache parent writable by runtime user (abc) without touching all of /home/Tdarr
+chown "$PUID:$PGID" "$CACHE_PARENT"
+chmod 775 "$CACHE_PARENT"
+
+# Ensure cache dir itself is writable too
+chown "$PUID:$PGID" "$CACHE_DIR"
+chmod 775 "$CACHE_DIR"
