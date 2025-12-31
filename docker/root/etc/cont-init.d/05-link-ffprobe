@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bash
+
+# Link ffprobe binaries after ffmpeg is set up
+if [ -f /usr/lib/jellyfin-ffmpeg/ffprobe ]; then
+    ln -sf /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe
+    ln -sf /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/tdarr-ffprobe
+    echo "Symlinks for ffprobe created."
+else
+    echo "/usr/lib/jellyfin-ffmpeg/ffprobe not found, skipping symlink creation."
+fi
