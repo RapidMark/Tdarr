@@ -1,0 +1,18 @@
+#!/usr/bin/with-contenv bash
+set -euo pipefail
+
+PUID="${PUID:-99}"
+PGID="${PGID:-100}"
+
+# Only manage the explicit env-var cache location (if set)
+CACHE_DIR="${MESA_SHADER_CACHE_DIR:-}"
+
+if [ -z "$CACHE_DIR" ]; then
+  exit 0
+fi
+
+PARENT_DIR="$(dirname "$CACHE_DIR")"
+
+mkdir -p "$CACHE_DIR"
+chown "$PUID:$PGID" "$PARENT_DIR" "$CACHE_DIR"
+chmod 775 "$PARENT_DIR" "$CACHE_DIR"

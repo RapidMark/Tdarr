@@ -71,7 +71,7 @@ RUN chmod +x /etc/services.d/tdarr_server/run /etc/services.d/tdarr_node/run
 RUN usermod -u 99 abc && groupmod -g 100 users && usermod -g 100 abc
 
 # Ensure abc owns all relevant files and directories
-RUN chown -R abc:users /app /config /data /logs /temp || true
+RUN chown -R abc:users /home/Tdarr /app /config /data /logs /temp || true
 
 USER abc
 
